@@ -1,38 +1,67 @@
-const factorial = function (n) {
-    if (n === 0) return 1;
-    let product = 1;
-    for (let i = n; i > 0; i--) {
-        product *= i;
-    }
-    return product;
-};
-
 const display = document.querySelector("#display");
-display.textContent = "";
+
 
 const container = document.querySelector("#container");
 const equals = document.querySelector(".equality");
 const back = document.querySelector(".back");
-const operations = '/*-+';
-const operationsNoSub = '/*+';
-
-let result = 0;
+const clear = document.querySelector(".clearAll");
+const operators = document.querySelectorAll(".operators");
+const nums = document.querySelectorAll(".nums");
+const zero = document.querySelector(".zero");
+let typed = false;
 
 container.addEventListener('click', e=>{
-    if (!(e.target.classList.contains("clear") || e.target === equals || e.target === display)){
+    if(!typed){
+        display.textContent = "";
+        typed = true;
+    }
+    if (e.target.classList.contains("nums") || e.target.classList.contains("operators")){
         display.textContent += e.target.textContent;
     }
+    if (e.target.classList.contains("operators")){
+        let content = display.textContent.trim();
+        let lastOperation = content[content.length-1];
+        
+        if(content.length > 3){
+            
+            let result = solve(false);
+            if (isNaN(result)){
+                console.log("Solvable? " , result)
+            } else {
+                display.textContent = result+lastOperation;
+            }
+        }
+    }
     if (e.target === equals) {
-        let content = display.textContent.trim(); // Clean input
+        console.log("equals clicked");
+        display.textContent = solve(true);
+    }
     
+    if (e.target === back){
+        display.textContent = display.textContent.slice(0,-1);
+    }
+    if (e.target === clear){
+        display.textContent = "";
+    }
+    
+});
+
+function solve(flg){
+    
+    let content = display.textContent.trim(); // Clean input
+    if (flg){
+
+    } else {
+        content = content.slice(0,-1);
+        console.log("contentis:", content);
+    }
         // Regex to identify the main operator, while respecting negative signs.
         const operatorRegex = /(?<!^)([+\-*/])/;
         const operatorMatch = content.match(operatorRegex);
 
         if (!operatorMatch) {
-            display.textContent = "Syntax Error";
             console.log('No valid operator found');
-            return;
+            return "Syntax Error";
         }
     
         const operator = operatorMatch[1]; // The main operator (+, -, *, /)
@@ -43,9 +72,8 @@ container.addEventListener('click', e=>{
     
         // Check if both sides of the split are valid numbers
         if (isNaN(left) || isNaN(right)) {
-            display.textContent = "Syntax Error";
             console.log('Invalid number format');
-            return;
+            return "Syntax Error";
         }
     
         console.log('Operands:', left, right);
@@ -64,24 +92,15 @@ container.addEventListener('click', e=>{
                 break;
             case '/':
                 if (right === 0) {
-                    display.textContent = "Cannot divide by 0";
                     console.log('Division by zero');
-                    return;
+                    return "Cannot divide by 0";
                 }
                 result = left / right;
                 break;
             default:
-                display.textContent = "Syntax Error";
                 console.log('Unknown operator');
-                return;
-        }
-    
-        // Display the result
-        display.textContent = result;
+                return "Syntax Error";
     }
-    
-    if (e.target === back){
-        display.textContent = display.textContent.slice(0,-1);
-    }
-    
-});
+    // Return the result
+    return result;
+}
