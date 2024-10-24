@@ -41,7 +41,7 @@ body {
 }
 #container *:hover {
     cursor: pointer;
-    background-color: #a0d6ac;
+    background-color: #afd1b6;
 }
 #container *{
     user-select: none;
