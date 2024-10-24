@@ -59,7 +59,6 @@ function solve(flg){
     
     let content = display.textContent.trim(); // Clean input
     if (flg){
-
     } else {
         content = content.slice(0,-1);
         console.log("contentis:", content);
@@ -68,10 +67,15 @@ function solve(flg){
     // Regex to find the main operator, excluding negative signs at the start
     const operatorRegex = /(?<!^)([+\-*/])/;
     const operatorMatch = content.match(operatorRegex);
+    const isNumber = parseFloat(content);
 
-    if (!operatorMatch) {
+    if (!operatorMatch && typeof isNumber === 'number') {
+        console.log("returned current number");
+        return isNumber;
+    }
+    if (!operatorMatch && typeof isNumber !== 'number'){
         console.log("No valid operator found");
-        return "Syntax Error";;
+        return "Syntax Error";
     }
 
     const operator = operatorMatch[1]; // Extract the main operator
@@ -84,11 +88,16 @@ function solve(flg){
     const rightPart = content.slice(operatorIndex + 1).trim();
 
     console.log("Left Part:", leftPart, "Right Part:", rightPart);
+    if(rightPart === ''){
+        console.log("no right part");
+        return "Syntax Error";
+    }
 
     // Handle cases where only decimal points are entered
     const left = leftPart === '' ? 0 : parseFloat(leftPart);
     const right = rightPart === '' ? 0 : parseFloat(rightPart);
 
+    
     if (isNaN(left) || isNaN(right)) {
         console.log("Invalid operands");
         return "Syntax Error";;
